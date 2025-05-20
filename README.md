@@ -1,4 +1,9 @@
 <div align="center">
+    <img width="128" height="128" src="assets/icon.svg" alt="icon">
+</div>
+
+
+<div align="center">
 
 # HoYoLAB daily rewards
 
