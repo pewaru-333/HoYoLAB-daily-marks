@@ -22,7 +22,8 @@ profile = {
     "honkai_3": False,
     "tears_of_themis": False,
     "zenless_zone_zero": False,
-    "account_name": "Your account name (can be anything at all)"
+    "account_name": "Your account name (can be anything at all)",
+    "locale": "Prefer to use two lowercase letters locale (for example: ru)"
 }
 ```
 
