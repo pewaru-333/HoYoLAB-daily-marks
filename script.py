@@ -1,6 +1,7 @@
 from time import sleep
 
 import requests
+from requests import Response
 
 profile = {
     "ltoken_v2": "Obtained ltoken_v2",
@@ -10,110 +11,103 @@ profile = {
     "honkai_3": False,
     "tears_of_themis": False,
     "zenless_zone_zero": False,
-    "account_name": "Your account name (can be anything at all)"
+    "account_name": "Your account name (can be anything at all)",
+    "locale": "ru"
 }
 
-url_dict = {
-    "Genshin": 'https://sg-hk4e-api.hoyolab.com/event/sol/sign?lang=en-us&act_id=e202102251931481',
-    "Star_Rail": 'https://sg-public-api.hoyolab.com/event/luna/os/sign?lang=en-us&act_id=e202303301540311',
-    "Honkai_3": 'https://sg-public-api.hoyolab.com/event/mani/sign?lang=en-us&act_id=e202110291205111',
-    "Tears_of_Themis": 'https://sg-public-api.hoyolab.com/event/luna/os/sign?lang=en-us&act_id=e202308141137581',
-    "Zenless_Zone_Zero": 'https://sg-public-api.hoyolab.com/event/luna/zzz/os/sign?lang=en-us&act_id=e202406031448091'
-}
-
-header_dict = {
-    "default": {
-        'Accept': 'application/json, text/plain, */*',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Connection': 'keep-alive',
-        'x-rpc-app_version': '2.34.1',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
-        'x-rpc-client_type': '4',
-        'Referer': 'https://act.hoyolab.com/',
-        'Origin': 'https://act.hoyolab.com',
+games = [
+    {
+        "game": "Genshin Impact",
+        "is_picked": profile["genshin"],
+        "link": {
+            "url": "https://sg-hk4e-api.hoyolab.com/event/sol/sign",
+            "params": {
+                "lang": profile["locale"],
+                "act_id": "e202102251931481"
+            },
+            "headers": {}
+        }
     },
-    "Genshin": {
-
+    {
+        "game": "Honkai Star Rail",
+        "is_picked": profile["honkai_star_rail"],
+        "link": {
+            "url": "https://sg-public-api.hoyolab.com/event/luna/os/sign",
+            "params": {
+                "lang": profile["locale"],
+                "act_id": "e202303301540311"
+            },
+            "headers": {}
+        }
     },
-    "Star_Rail": {
-
+    {
+        "game": "Honkai Impact 3rd",
+        "is_picked": profile["honkai_3"],
+        "link": {
+            "url": "https://sg-public-api.hoyolab.com/event/mani/sign",
+            "params": {
+                "lang": profile["locale"],
+                "act_id": "e202110291205111"
+            },
+            "headers": {}
+        }
     },
-    "Honkai_3": {
-
+    {
+        "game": "Tears of Themis",
+        "is_picked": profile["tears_of_themis"],
+        "link": {
+            "url": "https://sg-public-api.hoyolab.com/event/luna/os/sign",
+            "params": {
+                "lang": profile["locale"],
+                "act_id": "e202308141137581"
+            },
+            "headers": {}
+        }
     },
-    "Tears_of_Themis": {
-
-    },
-    "Zenless_Zone_Zero": {
-        'x-rpc-signgame': 'zzz',
+    {
+        "game": "Zenless Zone Zero",
+        "is_picked": profile["zenless_zone_zero"],
+        "link": {
+            "url": "https://sg-public-api.hoyolab.com/event/luna/zzz/os/sign",
+            "params": {
+                "lang": profile["locale"],
+                "act_id": "e202406031448091"
+            },
+            "headers": {
+                "x-rpc-signgame": "zzz"
+            }
+        }
     }
+]
+
+common_header = {
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Connection": "keep-alive",
+    "Origin": "https://act.hoyolab.com",
+    "Referer": "https://act.hoyolab.com/",
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3",
+    "x-rpc-app_version": "2.34.1",
+    "x-rpc-client_type": "4"
 }
 
 
 def auto_sign_in():
-    urls_with_headers = []
+    print(f"======= Check-in for {profile['account_name']} =======")
 
-    if profile.get("genshin"):
-        urls_with_headers.append(
-            dict(
-                url=url_dict["Genshin"],
-                headers={
-                    **header_dict["default"], **header_dict["Genshin"]
-                }
-            )
-        )
+    picked_games = list(filter(lambda game: game["is_picked"], games))
+    responses: list[Response] = []
 
-    if profile.get("honkai_star_rail"):
-        urls_with_headers.append(
-            dict(
-                url=url_dict["Star_Rail"],
-                headers={
-                    **header_dict["default"], **header_dict["Star_Rail"]
-                }
-            )
-        )
-
-    if profile.get("honkai_3"):
-        urls_with_headers.append(
-            dict(
-                url=url_dict["Honkai_3"],
-                headers={
-                    **header_dict["default"], **header_dict["Honkai_3"]
-                }
-            )
-        )
-
-    if profile.get("tears_of_themis"):
-        urls_with_headers.append(
-            dict(
-                url=url_dict["Tears_of_Themis"],
-                headers={
-                    **header_dict["default"], **header_dict["Tears_of_Themis"]
-                }
-            )
-        )
-
-    if profile.get("zenless_zone_zero"):
-        urls_with_headers.append(
-            dict(
-                url=url_dict["Zenless_Zone_Zero"],
-                headers={
-                    **header_dict["default"], **header_dict["Zenless_Zone_Zero"]
-                }
-            )
-        )
-
-    response_message = f"Check-in completed for {profile['account_name']}"
-
-    sleep_time = 5
-    sign_in_requests = []
-
-    for item in urls_with_headers:
-        sleep(sleep_time)
+    for game in picked_games:
+        sleep(5)
 
         request = requests.post(
-            url=item["url"],
-            headers=item["headers"],
+            url=game["link"]["url"],
+            params=game["link"]["params"],
+            headers={
+                **game["link"]["headers"],
+                **common_header
+            },
             cookies={
                 "ltoken_v2": profile["ltoken_v2"],
                 "ltuid_v2": profile["ltuid_v2"]
@@ -121,36 +115,35 @@ def auto_sign_in():
             allow_redirects=False
         )
 
-        sign_in_requests.append(request)
+        responses.append(request)
 
-    for index, response in enumerate(sign_in_requests):
+    response_message = ""
 
-        game_name = next((key for key, value in url_dict.items() if value == urls_with_headers[index]["url"]), None)
-        game_name = game_name.replace("_", " ") if game_name else ""
+    for index, response in enumerate(responses):
+        game_name = picked_games[index]["game"]
 
         try:
             response_json = response.json()
-            check_in_result = response_json.get("message")
+            check_in_result: str = response_json.get("message")
             is_error = check_in_result != "OK"
 
-            if is_error:
-                try:
-                    captcha_blocked = (
-                        response_json
-                        .get("data")
-                        .get("gt_result")
-                        .get("is_risk")
-                    )
+            if not is_error:
+                response_message += f"Check-in for {game_name} is successful!\n"
+            else:
+                if response_json.get("data") is None:
+                    response_message += f"{game_name}: {check_in_result}\n"
+                else:
+                    try:
+                        captcha_blocked = response_json["data"]["gt_result"]["is_risk"]
 
-                    if captcha_blocked:
-                        response_message += f"\n{game_name}: Auto check-in failed due to CAPTCHA blocking."
+                        if captcha_blocked:
+                            response_message += f"{game_name}: Auto check-in failed due to CAPTCHA blocking!\n"
 
-                except Exception:
-                    response_message += f"\n{game_name}: {'' if not is_error else '@everyone'} {check_in_result}"
-
+                    except Exception:
+                        response_message += f"{game_name}: Unexpected error!\n"
 
         except Exception as e:
-            response_message += f"\nError processing {game_name}: {str(e)}"
+            response_message += f"Error processing {game_name}: {str(e)}\n"
 
     print(response_message)
 
