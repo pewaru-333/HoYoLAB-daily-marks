@@ -82,3 +82,10 @@ where first two digits are minutes, second pair is hours. This code `/opt/etc/ho
 ```bash
 /opt/etc/init.d/S10cron start
 ```
+
+7. As the result, you can see this text in `log.txt`.
+
+```
+======= Check-in for Player =======
+Check-in for Genshin Impact is successful!
+```
