@@ -28,3 +28,55 @@ profile = {
 ```
 
 To get the necessary parameters, please follow the instructions provided here: https://github.com/Joshua-Noakes1/mei-cards#2-getting-your-hoyolab-cookies.
+
+
+## Usage example
+
+If you have a router with Entware installed, you can set up a daily task to automatically check-in.
+
+1. Connect to Entware with SSH or Telnet.
+
+```bash
+ssh [router address] -p [port] -l [username]
+```
+
+2. Install necessary packages.
+
+```bash
+opkg install python3
+opkg install python3-pip
+opkg install cron
+pip install requests
+```
+
+3. Create a folder somewhere in your Entware and put a [script.py](script.py) there. You can use the SMB explorer to do this more easily. The approximate path is shown below.
+
+```
+/opt/etc/hoyolab/script.py
+```
+
+4. Open script.py as text and replace fields in profile dict. Test script.
+
+```bash
+/opt/bin/python3 /opt/etc/hoyolab/script.py
+```
+
+5. If you get message in terminal (not Python exceptions), then setup cron. Open this file
+
+```
+/opt/etc/crontab
+```
+
+and put this line at the end
+
+```
+05 19 * * * root /opt/bin/python3 /opt/etc/hoyolab/script.py > /opt/etc/hoyolab/log.txt 2>&1
+```
+
+where first two digits are minutes, second pair is hours. This code `/opt/etc/hoyolab/log.txt 2>&1` creates a file with log.
+
+6. Start cron service
+
+```bash
+/opt/etc/init.d/S10cron start
+```
