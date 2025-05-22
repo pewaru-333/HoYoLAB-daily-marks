@@ -23,7 +23,7 @@ profile = {
     "tears_of_themis": False,
     "zenless_zone_zero": False,
     "account_name": "Your account name (can be anything at all)",
-    "locale": "Prefer to use two lowercase letters locale (for example: ru)"
+    "locale": "ru"  # [en-us, de, es, fr, it, pt, ru, tr, zh-cn, zh-tw, ja, ko, id, th, vi]
 }
 ```
 
