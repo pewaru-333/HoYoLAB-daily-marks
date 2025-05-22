@@ -27,8 +27,6 @@ profile = {
 }
 ```
 
-Locale parameter affects the language of receiving notifications about the check-in in the game. See [this screenshot](assets/locale_screenshot.png).
-
 To get the necessary `ltoken_v2` and `ltuid_v2`, please, follow the instructions provided here: https://github.com/Joshua-Noakes1/mei-cards#2-getting-your-hoyolab-cookies.
 
 
@@ -89,3 +87,9 @@ where first two digits are minutes, second pair is hours. This code `/opt/etc/ho
 ======= Check-in for Player =======
 Check-in for Genshin Impact is successful!
 ```
+
+## Localization support
+
+Locale parameter affects the language of notifications about the check-in in the game and errors in `log.txt`.
+
+![In-game screenshot](assets/locale_screenshot.png)
