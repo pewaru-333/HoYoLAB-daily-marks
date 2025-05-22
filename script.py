@@ -12,12 +12,11 @@ profile = {
     "tears_of_themis": False,
     "zenless_zone_zero": False,
     "account_name": "Your account name (can be anything at all)",
-    "locale": "ru"
+    "locale": "ru"  # [en-us, de, es, fr, it, pt, ru, tr, zh-cn, zh-tw, ja, ko, id, th, vi]
 }
 
-games = [
-    {
-        "game": "Genshin Impact",
+games = {
+    "Genshin Impact": {
         "is_picked": profile["genshin"],
         "link": {
             "url": "https://sg-hk4e-api.hoyolab.com/event/sol/sign",
@@ -28,8 +27,7 @@ games = [
             "headers": {}
         }
     },
-    {
-        "game": "Honkai Star Rail",
+    "Honkai Star Rail": {
         "is_picked": profile["honkai_star_rail"],
         "link": {
             "url": "https://sg-public-api.hoyolab.com/event/luna/os/sign",
@@ -40,8 +38,7 @@ games = [
             "headers": {}
         }
     },
-    {
-        "game": "Honkai Impact 3rd",
+    "Honkai Impact 3rd": {
         "is_picked": profile["honkai_3"],
         "link": {
             "url": "https://sg-public-api.hoyolab.com/event/mani/sign",
@@ -52,8 +49,7 @@ games = [
             "headers": {}
         }
     },
-    {
-        "game": "Tears of Themis",
+    "Tears of Themis": {
         "is_picked": profile["tears_of_themis"],
         "link": {
             "url": "https://sg-public-api.hoyolab.com/event/luna/os/sign",
@@ -64,8 +60,7 @@ games = [
             "headers": {}
         }
     },
-    {
-        "game": "Zenless Zone Zero",
+    "Zenless Zone Zero": {
         "is_picked": profile["zenless_zone_zero"],
         "link": {
             "url": "https://sg-public-api.hoyolab.com/event/luna/zzz/os/sign",
@@ -78,7 +73,7 @@ games = [
             }
         }
     }
-]
+}
 
 common_header = {
     "Accept": "application/json, text/plain, */*",
@@ -95,17 +90,17 @@ common_header = {
 def auto_sign_in():
     print(f"======= Check-in for {profile['account_name']} =======")
 
-    picked_games = list(filter(lambda game: game["is_picked"], games))
-    responses: list[Response] = []
+    picked_games = {key: value for key, value in games.items() if value["is_picked"]}
+    responses: dict[str, Response] = {}
 
-    for game in picked_games:
+    for key, value in picked_games.items():
         sleep(5)
 
         request = requests.post(
-            url=game["link"]["url"],
-            params=game["link"]["params"],
+            url=value["link"]["url"],
+            params=value["link"]["params"],
             headers={
-                **game["link"]["headers"],
+                **value["link"]["headers"],
                 **common_header
             },
             cookies={
@@ -115,35 +110,33 @@ def auto_sign_in():
             allow_redirects=False
         )
 
-        responses.append(request)
+        responses[key] = request
 
     response_message = ""
 
-    for index, response in enumerate(responses):
-        game_name = picked_games[index]["game"]
-
+    for game, response in responses.items():
         try:
             response_json = response.json()
             check_in_result: str = response_json.get("message")
             is_error = check_in_result != "OK"
 
             if not is_error:
-                response_message += f"Check-in for {game_name} is successful!\n"
+                response_message += f"Check-in for {game} is successful!\n"
             else:
                 if response_json.get("data") is None:
-                    response_message += f"{game_name}: {check_in_result}\n"
+                    response_message += f"{game}: {check_in_result}\n"
                 else:
                     try:
                         captcha_blocked = response_json["data"]["gt_result"]["is_risk"]
 
                         if captcha_blocked:
-                            response_message += f"{game_name}: Auto check-in failed due to CAPTCHA blocking!\n"
+                            response_message += f"{game}: Auto check-in failed due to CAPTCHA blocking!\n"
 
                     except Exception:
-                        response_message += f"{game_name}: Unexpected error!\n"
+                        response_message += f"{game}: Unexpected error!\n"
 
         except Exception as e:
-            response_message += f"Error processing {game_name}: {str(e)}\n"
+            response_message += f"Error processing {game}: {str(e)}\n"
 
     print(response_message)
 
